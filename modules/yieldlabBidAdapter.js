@@ -34,6 +34,10 @@ export const spec = {
       json: true
     }
 
+    // id objects with name and value properties
+    // e.g. {'name':'ylid','value':'19258275-8730-4b15-8815-56008dcc0ebd'}
+    const ids = [{'name':'ylid','value':'19258275-8730-4b15-8815-56008dcc0ebd'}];
+
     utils._each(validBidRequests, function (bid) {
       adslotIds.push(bid.params.adslotId)
       if (bid.params.targeting) {
@@ -50,12 +54,30 @@ export const spec = {
 
     const adslots = adslotIds.join(',')
     const queryString = createQueryString(query)
+    const requests = []
 
-    return {
+    requests.push({
       method: 'GET',
       url: `${ENDPOINT}/yp/${adslots}?${queryString}`,
       validBidRequests: validBidRequests
-    }
+    })
+
+    utils._each(ids, function(id) {
+      const encodedId = _encodeNamedId(id)
+
+      requests.push({
+        method: 'GET',
+        url: `${ENDPOINT}/yp/${adslots}?${queryString}&ids=${encodedId}`,
+        validBidRequests: validBidRequests,
+        id: id
+      }}
+    })
+
+    return requests;
+  },
+
+  _encodeNamedId: function(id) {
+    return encodeURIComponent(`${id.name}:${id.value})
   },
 
   /**
@@ -79,7 +101,11 @@ export const spec = {
       if (matchedBid) {
         const primarysize = bidRequest.sizes.length === 2 && !utils.isArray(bidRequest.sizes[0]) ? bidRequest.sizes : bidRequest.sizes[0]
         const customsize = bidRequest.params.adSize !== undefined ? parseSize(bidRequest.params.adSize) : primarysize
-        const extId = bidRequest.params.extId !== undefined ? '&id=' + bidRequest.params.extId : ''
+
+        var extId = bidRequest.params.extId !== undefined ? '&id=' + bidRequest.params.extId : ''
+        extId = bidRequest.id !== undefined ? '&id=' + `id_${bidRequest.id.name}` : extId
+        const namedId = bidRequest.id !== undefined ? _encodeNamedId(bidRequest.id) : ''
+
         const bidResponse = {
           requestId: bidRequest.bidId,
           cpm: matchedBid.price / 100,
@@ -91,7 +117,7 @@ export const spec = {
           netRevenue: false,
           ttl: BID_RESPONSE_TTL_SEC,
           referrer: '',
-          ad: `<script src="${ENDPOINT}/d/${matchedBid.id}/${bidRequest.params.supplyId}/${customsize[0]}x${customsize[1]}?ts=${timestamp}${extId}"></script>`
+          ad: `<script src="${ENDPOINT}/d/${matchedBid.id}/${bidRequest.params.supplyId}/${customsize[0]}x${customsize[1]}?ts=${timestamp}${extId}${namedId}"></script>`
         }
 
         if (isVideo(bidRequest)) {
