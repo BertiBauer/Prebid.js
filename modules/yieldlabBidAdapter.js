@@ -37,7 +37,7 @@ export const spec = {
     // id objects with name and value properties
     // later on there will be multiple ids to use (netid, ylid, ...)
     // e.g. {'name':'ylid','value':'19258275-8730-4b15-8815-56008dcc0ebd'}
-    const ids = bidRequest.userId && bidRequest.userId.ylid !== undefined ? [{'name':'ylid', 'value':bidRequest.userId.ylid}] :[{'name':'ylid','value':'19258275-8730-4b15-8815-56008dcc0ebd'}];
+    const ids = bidderRequest.userId && bidderRequest.userId.ylid !== undefined ? [{'name': 'ylid', 'value': bidderRequest.userId.ylid}] : [{'name': 'ylid', 'value': '19258275-8730-4b15-8815-56008dcc0ebd'}];
 
     utils._each(validBidRequests, function (bid) {
       adslotIds.push(bid.params.adslotId)
@@ -64,21 +64,17 @@ export const spec = {
     })
 
     utils._each(ids, function(id) {
-      const encodedId = _encodeNamedId(id)
+      const encodedId = encodeNamedId(id)
 
       requests.push({
         method: 'GET',
         url: `${ENDPOINT}/yp/${adslots}?${queryString}&ids=${encodedId}`,
         validBidRequests: validBidRequests,
         id: id
-      }}
+      })
     })
 
-    return requests;
-  },
-
-  _encodeNamedId: function(id) {
-    return encodeURIComponent(`${id.name}:${id.value})
+    return requests
   },
 
   /**
@@ -105,7 +101,7 @@ export const spec = {
 
         var extId = bidRequest.params.extId !== undefined ? '&id=' + bidRequest.params.extId : ''
         extId = bidRequest.id !== undefined ? '&id=' + `id_${bidRequest.id.name}` : extId
-        const namedId = bidRequest.id !== undefined ? _encodeNamedId(bidRequest.id) : ''
+        const namedId = bidRequest.id !== undefined ? encodeNamedId(bidRequest.id) : ''
 
         const bidResponse = {
           requestId: bidRequest.bidId,
@@ -147,6 +143,15 @@ export const spec = {
     return bidResponses
   }
 };
+
+/**
+ * Encodes Ids to correct syntax
+ * @param {Object} id
+ * @returns {String}
+ */
+function encodeNamedId (id) {
+  return encodeURIComponent(`${id.name}:${id.value}`)
+}
 
 /**
  * Is this a video format?
