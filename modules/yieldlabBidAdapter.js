@@ -99,9 +99,8 @@ export const spec = {
         const primarysize = bidRequest.sizes.length === 2 && !utils.isArray(bidRequest.sizes[0]) ? bidRequest.sizes : bidRequest.sizes[0]
         const customsize = bidRequest.params.adSize !== undefined ? parseSize(bidRequest.params.adSize) : primarysize
 
-        var extId = bidRequest.params.extId !== undefined ? '&id=' + bidRequest.params.extId : ''
-        extId = bidRequest.id !== undefined ? '&id=' + `id_${bidRequest.id.name}` : extId
-        const namedId = bidRequest.id !== undefined ? encodeNamedId(bidRequest.id) : ''
+        const extId = bidRequest.params.extId !== undefined ? '&id=' + bidRequest.params.extId : ''
+        const namedId = originalBidRequest.id !== undefined ? '&ids=' + encodeNamedId(originalBidRequest.id) : ''
 
         const bidResponse = {
           requestId: bidRequest.bidId,
