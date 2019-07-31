@@ -27,6 +27,7 @@ export const spec = {
    * @returns {{method: string, url: string}}
    */
   buildRequests: function (validBidRequests, bidderRequest) {
+    var ids = []
     const adslotIds = []
     const timestamp = Date.now()
     const query = {
@@ -34,15 +35,19 @@ export const spec = {
       json: true
     }
 
-    // id objects with name and value properties
-    // later on there will be multiple ids to use (netid, ylid, ...)
-    // e.g. {'name':'ylid','value':'19258275-8730-4b15-8815-56008dcc0ebd'}
-    const ids = bidderRequest && bidderRequest.userId && bidderRequest.userId.ylid !== undefined ? [{'name': 'ylid', 'value': bidderRequest.userId.ylid}] : [];
-
     utils._each(validBidRequests, function (bid) {
+      console.log(bid);
       adslotIds.push(bid.params.adslotId)
       if (bid.params.targeting) {
         query.t = createQueryString(bid.params.targeting)
+      }
+      /*
+        yl user id passed by userId Module
+        later on there will be multiple ids to use (netid, ylid, ...)
+        e.g. {'name':'ylid','value':'19258275-8730-4b15-8815-56008dcc0ebd'}
+      */
+      if (bid.userId && bid.userId.ylid) {
+        ids = [{'name': 'ylid', 'value': bid.userId.ylid}]
       }
     })
 
@@ -57,12 +62,14 @@ export const spec = {
     const queryString = createQueryString(query)
     const requests = []
 
+    // original request
     requests.push({
       method: 'GET',
       url: `${ENDPOINT}/yp/${adslots}?${queryString}`,
       validBidRequests: validBidRequests
     })
 
+    // additional requests for each id
     utils._each(ids, function(id) {
       const encodedId = encodeNamedId(id)
 
