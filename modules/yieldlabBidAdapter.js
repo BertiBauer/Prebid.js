@@ -36,7 +36,6 @@ export const spec = {
     }
 
     utils._each(validBidRequests, function (bid) {
-      console.log(bid);
       adslotIds.push(bid.params.adslotId)
       if (bid.params.targeting) {
         query.t = createQueryString(bid.params.targeting)
@@ -130,7 +129,7 @@ export const spec = {
             bidResponse.height = playersize[1]
           }
           bidResponse.mediaType = VIDEO
-          bidResponse.vastUrl = `${ENDPOINT}/d/${matchedBid.id}/${bidRequest.params.supplyId}/${customsize[0]}x${customsize[1]}?ts=${timestamp}${extId}`
+          bidResponse.vastUrl = `${ENDPOINT}/d/${matchedBid.id}/${bidRequest.params.supplyId}/${customsize[0]}x${customsize[1]}?ts=${timestamp}${extId}${namedId}`
 
           if (isOutstream(bidRequest)) {
             const renderer = Renderer.install({
