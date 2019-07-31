@@ -37,7 +37,7 @@ export const spec = {
     // id objects with name and value properties
     // later on there will be multiple ids to use (netid, ylid, ...)
     // e.g. {'name':'ylid','value':'19258275-8730-4b15-8815-56008dcc0ebd'}
-    const ids = bidderRequest.userId && bidderRequest.userId.ylid !== undefined ? [{'name': 'ylid', 'value': bidderRequest.userId.ylid}] : [];
+    const ids = bidderRequest && bidderRequest.userId && bidderRequest.userId.ylid !== undefined ? [{'name': 'ylid', 'value': bidderRequest.userId.ylid}] : [];
 
     utils._each(validBidRequests, function (bid) {
       adslotIds.push(bid.params.adslotId)

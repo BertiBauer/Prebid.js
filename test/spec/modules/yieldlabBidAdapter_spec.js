@@ -58,7 +58,7 @@ describe('yieldlabBidAdapter', function () {
 
   describe('buildRequests', function () {
     const bidRequests = [REQUEST]
-    const request = spec.buildRequests(bidRequests)
+    const request = spec.buildRequests(bidRequests)[0]
 
     it('sends bid request to ENDPOINT via GET', function () {
       expect(request.method).to.equal('GET')
@@ -77,7 +77,7 @@ describe('yieldlabBidAdapter', function () {
         consentString: 'BN5lERiOMYEdiAKAWXEND1AAAAE6DABACMA',
         gdprApplies: true
       }
-    })
+    })[0]
 
     it('passes gdpr flag and consent if present', function () {
       expect(gdprRequest.url).to.include('consent=BN5lERiOMYEdiAKAWXEND1AAAAE6DABACMA')
