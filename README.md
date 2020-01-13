@@ -6,7 +6,7 @@
 [![devDependencies Status](https://david-dm.org/prebid/Prebid.js/dev-status.svg)](https://david-dm.org/prebid/Prebid.js?type=dev)
 [![Total Alerts](https://img.shields.io/lgtm/alerts/g/prebid/Prebid.js.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/prebid/Prebid.js/alerts/)
 
-# Prebid.js
+# Prebid.js (edit)
 
 > A free and open source library for publishers to quickly implement header bidding.
 
